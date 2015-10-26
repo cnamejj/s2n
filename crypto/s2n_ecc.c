@@ -78,7 +78,7 @@ int s2n_ecc_write_ecc_params(struct s2n_ecc_params *server_ecc_params, struct s2
     return 0;
 }
 
-int s2n_ecc_read_ecc_params(struct s2n_ecc_params *server_ecc_params, struct s2n_stuffer *in, struct s2n_blob *read)
+int s2n_ecc_read_ecc_params(struct s2n_ecc_params *server_ecc_params, struct s2n_stuffer *in, struct s2n_blob *b_read)
 {
     uint8_t curve_type;
     uint8_t point_length;
@@ -86,8 +86,8 @@ int s2n_ecc_read_ecc_params(struct s2n_ecc_params *server_ecc_params, struct s2n
     EC_POINT *point;
 
     /* Remember where we started reading the data */
-    read->data = s2n_stuffer_raw_read(in, 0);
-    notnull_check(read->data);
+    b_read->data = s2n_stuffer_raw_read(in, 0);
+    notnull_check(b_read->data);
 
     /* Read the curve */
     GUARD(s2n_stuffer_read_uint8(in, &curve_type));
@@ -123,7 +123,7 @@ int s2n_ecc_read_ecc_params(struct s2n_ecc_params *server_ecc_params, struct s2n
     }
     EC_POINT_free(point);
 
-    read->size = 3 + (1 + point_length);
+    b_read->size = 3 + (1 + point_length);
 
     return 0;
 }

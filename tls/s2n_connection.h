@@ -133,6 +133,10 @@ struct s2n_connection {
     /* OCSP stapling response data */
     s2n_status_request_type status_type;
     struct s2n_blob status_response;
+
+    /* Optional overrides for read() and write() routines */
+    ssize_t (*read_call)(int fd, void *buf, size_t count);
+    ssize_t (*write_call)(int fd, const void *buf, size_t count);
 };
 
 /* Sleep s2n_connection_get_delay() ammount of time */

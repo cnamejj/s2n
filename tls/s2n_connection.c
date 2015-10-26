@@ -94,6 +94,10 @@ struct s2n_connection *s2n_connection_new(s2n_mode mode)
     GUARD_PTR(s2n_stuffer_growable_alloc(&conn->handshake.io, 0));
     GUARD_PTR(s2n_connection_wipe(conn));
 
+    /* Initialize read/write routines to default (direct I/O) calls */
+    conn->read_call = 0;
+    conn->write_call = 0;
+
     return conn;
 }
 
@@ -156,6 +160,18 @@ int s2n_connection_free(struct s2n_connection *conn)
 int s2n_connection_set_config(struct s2n_connection *conn, struct s2n_config *config)
 {
     conn->config = config;
+    return 0;
+}
+
+int s2n_connection_set_read_call(struct s2n_connection *conn, ssize_t (*abs_read)())
+{
+    conn->read_call = abs_read;
+    return 0;
+}
+
+int s2n_connection_set_write_call(struct s2n_connection *conn, ssize_t (*abs_write)())
+{
+    conn->write_call = abs_write;
     return 0;
 }
 

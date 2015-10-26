@@ -48,7 +48,7 @@ int s2n_read_full_record(struct s2n_connection *conn, uint8_t *record_type, int 
 
     /* Read the record until we at least have a header */
     while (s2n_stuffer_data_available(&conn->header_in) < S2N_TLS_RECORD_HEADER_LENGTH) {
-        r = s2n_stuffer_recv_from_fd(&conn->header_in, conn->readfd, S2N_TLS_RECORD_HEADER_LENGTH - s2n_stuffer_data_available(&conn->header_in));
+        r = s2n_stuffer_recv_from_fd(&conn->header_in, conn->readfd, S2N_TLS_RECORD_HEADER_LENGTH - s2n_stuffer_data_available(&conn->header_in), conn->read_call);
         if (r == 0) {
             return -2;
         }
@@ -80,7 +80,7 @@ int s2n_read_full_record(struct s2n_connection *conn, uint8_t *record_type, int 
 
     /* Read enough to have the whole record */
     while (s2n_stuffer_data_available(&conn->in) < fragment_length) {
-        r = s2n_stuffer_recv_from_fd(&conn->in, conn->readfd, fragment_length - s2n_stuffer_data_available(&conn->in));
+        r = s2n_stuffer_recv_from_fd(&conn->in, conn->readfd, fragment_length - s2n_stuffer_data_available(&conn->in), conn->read_call);
         if (r == 0) {
             return -2;
         }

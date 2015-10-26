@@ -17,6 +17,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "utils/s2n_blob.h"
 
@@ -72,8 +73,8 @@ extern void *s2n_stuffer_raw_write(struct s2n_stuffer *stuffer, const uint32_t d
 extern void *s2n_stuffer_raw_read(struct s2n_stuffer *stuffer, uint32_t data_len);
 
 /* Send/receive stuffer to/from a file descriptor */
-extern int s2n_stuffer_recv_from_fd(struct s2n_stuffer *stuffer, int rfd, uint32_t len);
-extern int s2n_stuffer_send_to_fd(struct s2n_stuffer *stuffer, int wfd, uint32_t len);
+extern int s2n_stuffer_recv_from_fd(struct s2n_stuffer *stuffer, int rfd, uint32_t len, ssize_t (*r_call)(int fd, void *buf, size_t count));
+extern int s2n_stuffer_send_to_fd(struct s2n_stuffer *stuffer, int wfd, uint32_t len, ssize_t (*w_call)(int fd, const void *buf, size_t count));
 
 /* Read and write integers in network order */
 extern int s2n_stuffer_read_uint8(struct s2n_stuffer *stuffer, uint8_t *u);

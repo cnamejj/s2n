@@ -13,14 +13,22 @@
 # permissions and limitations under the License.
 #
 
+PLATFORM := $(shell uname)
+
 ifeq ($(PLATFORM),Darwin)
     LIBS = -lc -lpthread
+    MACOS_VERSION=$(shell sw_vers -productVersion | cut -d '.' -f 1,2)
 else ifeq ($(PLATFORM),FreeBSD)
     LIBS = -lthr
 else ifeq ($(PLATFORM),NetBSD)
     LIBS = -lpthread
 else
     LIBS = -lpthread -ldl -lrt
+endif
+
+ifneq ($(MACOS_VERSION),"10.13")
+    EXTRA_CFLAGS = -mmacosx-version-min=$(MACOS_VERSION)
+    EXTRA_LIBTOOLFLAGS = -macosx_version_min $(MACOS_VERSION)
 endif
 
 CRYPTO_LIBS = -lcrypto
@@ -39,7 +47,7 @@ DEFAULT_CFLAGS = -pedantic -Wall -Werror -Wimplicit -Wunused -Wcomment -Wchar-su
                  -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings -fPIC \
                  -std=c99 -D_POSIX_C_SOURCE=200809L -O2 -I$(LIBCRYPTO_ROOT)/include/ \
                  -I../api/ -I../ -Wno-deprecated-declarations -Wno-unknown-pragmas -Wformat-security \
-                 -D_FORTIFY_SOURCE=2 -fgnu89-inline
+                 -D_FORTIFY_SOURCE=2 -fgnu89-inline $(EXTRA_CFLAGS)
 
 # Add a flag to disable stack protector for alternative libcs without
 # libssp.
@@ -83,3 +91,8 @@ indentsource:
 .PHONY : decruft
 decruft:
 	$(RM) -- ${CRUFT}
+
+WTF:
+	echo "Platform /$(PLATFORM)/"
+	echo "EXTRA_CFLAGS /$(EXTRA_CFLAGS)/"
+	echo "EXTRA_LIBTOOLFLAGS /$(EXTRA_LIBTOOLFLAGS)/"

@@ -29,4 +29,4 @@ libtests2n.so: ${OBJS}
 	${CC} ${CFLAGS} -shared ${LDFLAGS} -o libtests2n.so ${OBJS}
 
 libtests2n.dylib: ${OBJS}
-	test ! -f /usr/lib/libSystem.dylib || libtool ${LDFLAGS} -dynamic -o libtests2n.dylib ${OBJS}
+	test ! -f /usr/lib/libSystem.dylib || libtool ${LDFLAGS} ${EXTRA_LIBTOOLFLAGS} -dynamic -o libtests2n.dylib ${OBJS}
